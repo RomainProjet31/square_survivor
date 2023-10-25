@@ -5,7 +5,7 @@ from entities.entity import Entity
 
 class Enemy(Entity):
     def __init__(self, x, y, current_map, player):
-        super().__init__(current_map, ENEMY_SIZE, .1, x, y, True, RED)
+        super().__init__(current_map, ENEMY_SIZE, .05, x, y, True, RED)
         self.player = player
 
     def update(self, dt):

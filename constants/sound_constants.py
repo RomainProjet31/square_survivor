@@ -1,0 +1,6 @@
+GAME_LOST = "GameOver.wav"
+WIN = "Picked Coin Echo.wav"
+PLAYER_DAMAGE = "damage_taken.mp3"
+BULLET_SHOOT = "mixkit-air-in-a-hit-2161.wav"
+HIT_WALL = "mixkit-arrow-shot-through-air-2771.wav"
+ENEMY_TOUCHED = "mixkit-body-impact-falling-into-the-sand-2498.wav"

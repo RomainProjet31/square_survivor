@@ -1,8 +1,10 @@
 import pygame
 import pygame.locals
 
+from constants.sound_constants import GAME_LOST, WIN
 from constants.sprite_constants import SCREEN_SIZE
 from constants.text_constants import GAME_OVER_TEXT, GAME_WON_TEXT
+from management.sound_manager import play
 from map.map import Map
 from constants.color_constants import WHITE, BLACK
 from ui.screen import Screen
@@ -44,9 +46,11 @@ class GameManager:
             if not self.current_map.player.alive:
                 self.game_over = True
                 self.game_over_ui.set_text(GAME_OVER_TEXT)
-            elif self.current_map.game_won:
+                play(GAME_LOST)
+            elif self.current_map.game_won and not self.game_over:
                 self.game_over = True
                 self.game_over_ui.set_text(GAME_WON_TEXT)
+                play(WIN)
 
             self.render()
             self.dt = CLOCK.tick(60)

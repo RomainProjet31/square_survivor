@@ -1,11 +1,13 @@
 import pygame.draw
 
 from constants.mecanic_constant import DAMAGE_DELAY, BLINK_DELAY
+from constants.sound_constants import PLAYER_DAMAGE
 from constants.sprite_constants import PLAYER_SIZE
 from entities.enemy import Enemy
 from entities.entity import Entity
 from constants.color_constants import BLUE
 from entities.weapon import Weapon
+from management.sound_manager import play
 
 
 class Player(Entity):
@@ -68,6 +70,7 @@ class Player(Entity):
         if self.hp > 0:
             self.hp -= 1
             self.tick_damage = 0
+            play(PLAYER_DAMAGE)
 
         if self.hp <= 0:
             self.alive = False

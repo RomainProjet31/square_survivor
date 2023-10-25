@@ -4,9 +4,11 @@ import pygame
 from pygame import Rect
 
 from constants.mecanic_constant import SHOOT_DELAY
+from constants.sound_constants import HIT_WALL, BULLET_SHOOT, ENEMY_TOUCHED
 from constants.sprite_constants import WEAPON_SIZE
 from entities.enemy import Enemy
 from entities.entity import Entity
+from management.sound_manager import play
 
 
 class Weapon(Entity):
@@ -29,6 +31,7 @@ class Weapon(Entity):
         if self.shoot_delay >= SHOOT_DELAY:
             self.__add_bullet()
             self.shoot_delay = 0
+            play(BULLET_SHOOT)
 
     def render(self):
         super().render()
@@ -72,17 +75,25 @@ class Bullet:
         for tile in tiles:
             if tile.collider and tile.rect.colliderect(self.rect):
                 self.alive = False
+                play(HIT_WALL)
+                break
 
-        for enemy in enemies:
-            if enemy.rect.colliderect(self.rect):
-                enemy.alive = False
-                self.alive = False
+        if self.alive:
+            self.__handle_enemies(enemies)
 
         if self.alive:
             self.__move(dt)
 
     def render(self, screen):
         screen.blit(self.surf, self.rect)
+
+    def __handle_enemies(self, enemies):
+        for enemy in enemies:
+            if enemy.rect.colliderect(self.rect):
+                enemy.alive = False
+                self.alive = False
+                play(ENEMY_TOUCHED)
+                break
 
     def __move(self, dt):
         self.rect.x -= math.cos(self.rad) * self.speed * dt
