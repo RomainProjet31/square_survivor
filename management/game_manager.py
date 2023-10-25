@@ -43,7 +43,7 @@ class GameManager:
                 self.current_map.update(self.dt)
                 self.ui.update()
 
-            if not self.current_map.player.alive:
+            if not self.current_map.player.alive and not self.game_over:
                 self.game_over = True
                 self.game_over_ui.set_text(GAME_OVER_TEXT)
                 play(GAME_LOST)
@@ -65,7 +65,7 @@ class GameManager:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
             self.running = False
-        elif keys[pygame.K_r]:
+        elif keys[pygame.K_r] and self.game_over:
             if self.current_map.game_won:
                 self.load_game()
             else:
