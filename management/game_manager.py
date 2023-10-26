@@ -1,9 +1,11 @@
+import os
+
 import pygame
 import pygame.locals
 
 from constants.sound_constants import GAME_LOST, WIN
 from constants.sprite_constants import SCREEN_SIZE
-from constants.ui_constants import GAME_OVER_TEXT, GAME_WON_TEXT, IMG_TUTORIAL
+from constants.ui_constants import GAME_OVER_TEXT, GAME_WON_TEXT, IMG_TUTORIAL, GAME_ENDED
 from management.sound_manager import play
 from map.map import Map
 from constants.color_constants import WHITE, BLACK
@@ -22,6 +24,7 @@ class GameManager:
         self.running = False
         self.started = False
         self.game_over = False
+        self.game_ended = False
         self.current_map = None
         self.game_over_ui = Screen(self)
         self.current_index_map = 0
@@ -54,7 +57,7 @@ class GameManager:
                 play(GAME_LOST)
             elif self.current_map.game_won and not self.game_over:
                 self.game_over = True
-                self.game_over_ui.set_text(GAME_WON_TEXT)
+                self.__set_text_game_won()
                 play(WIN)
 
             self.render()
@@ -68,7 +71,7 @@ class GameManager:
                 self.running = False
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE]:
+        if keys[pygame.K_ESCAPE] or (len(keys) > 0 and self.game_ended):
             self.running = False
         elif keys[pygame.K_p] and self.started and not self.game_over:
             self.pause = not self.pause
@@ -88,6 +91,14 @@ class GameManager:
             self.__render_game()
 
         pygame.display.update()
+
+    def __set_text_game_won(self):
+        lst = os.listdir("assets/maps")  # your directory path
+        if len(lst) > self.current_index_map:
+            txt = GAME_WON_TEXT
+        else:
+            txt = GAME_ENDED
+        self.game_over_ui.set_text(txt)
 
     def __reload_game(self):
         self.current_index_map -= 1
