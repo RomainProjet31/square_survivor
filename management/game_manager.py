@@ -3,7 +3,7 @@ import pygame.locals
 
 from constants.sound_constants import GAME_LOST, WIN
 from constants.sprite_constants import SCREEN_SIZE
-from constants.text_constants import GAME_OVER_TEXT, GAME_WON_TEXT
+from constants.ui_constants import GAME_OVER_TEXT, GAME_WON_TEXT, IMG_TUTORIAL
 from management.sound_manager import play
 from map.map import Map
 from constants.color_constants import WHITE, BLACK
@@ -18,7 +18,9 @@ class GameManager:
     def __init__(self):
         self.dt = 0
         self.ui = None
+        self.pause = False
         self.running = False
+        self.started = False
         self.game_over = False
         self.current_map = None
         self.game_over_ui = Screen(self)
@@ -26,6 +28,8 @@ class GameManager:
         self.screen = pygame.display.set_mode([SCREEN_SIZE, SCREEN_SIZE])
 
     def load_game(self):
+        if not self.started:
+            self.game_over_ui.set_image(IMG_TUTORIAL)
         self.running = True
         self.game_over = False
         self.current_index_map += 1
@@ -39,7 +43,8 @@ class GameManager:
         while self.running:
             # Reset the flags
             self.handle_keyboard()
-            if not self.game_over:
+
+            if self.started and not self.game_over and not self.pause:
                 self.current_map.update(self.dt)
                 self.ui.update()
 
@@ -65,14 +70,18 @@ class GameManager:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
             self.running = False
-        elif keys[pygame.K_r] and self.game_over:
-            if self.current_map.game_won:
+        elif keys[pygame.K_p] and self.started and not self.game_over:
+            self.pause = not self.pause
+        elif keys[pygame.K_r]:
+            if not self.started:
+                self.started = True
+            elif self.game_over and self.current_map.game_won:
                 self.load_game()
             else:
                 self.__reload_game()
 
     def render(self):
-        if self.game_over:
+        if self.game_over or not self.started:
             self.screen.fill(BLACK)
             self.game_over_ui.render()
         else:
